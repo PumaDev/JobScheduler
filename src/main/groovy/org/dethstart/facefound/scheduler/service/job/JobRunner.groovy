@@ -4,6 +4,7 @@ import groovy.util.logging.Log
 import org.dethstart.facefound.scheduler.domain.JobExecution
 import org.dethstart.facefound.scheduler.domain.JobStatus
 import org.dethstart.facefound.scheduler.exception.BusyJobRunnerException
+import org.dethstart.facefound.scheduler.exception.JobNotFoundException
 import org.dethstart.facefound.scheduler.util.ExceptionUtil
 
 import java.util.logging.Level
@@ -70,10 +71,10 @@ class JobRunner implements Runnable {
     }
 
     private void processJob() {
-        ScheduleJob scheduleJob = scheduleJobService.getScheduleJob(jobExecution.jobType)
-        if (scheduleJob) {
+        try {
+            ScheduleJob scheduleJob = scheduleJobService.getScheduleJob(jobExecution.jobType)
             jobExecution = runJob(scheduleJob, jobExecution)
-        } else {
+        } catch (JobNotFoundException ex) {
             log.info("JobRunner #$number: Job ${jobExecution.jobType} doesn't found")
             jobExecution = updateJobExecutionToNotFoundStatus(jobExecution)
         }

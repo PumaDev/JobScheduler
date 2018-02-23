@@ -1,7 +1,5 @@
 package org.dethstart.facefound.scheduler.util
 
-import org.springframework.stereotype.Component
-
 class ExceptionUtil {
 
     static String getStackTraceAsString(Throwable exception) {
