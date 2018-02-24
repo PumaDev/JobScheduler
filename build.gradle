@@ -1,52 +1,111 @@
-group 'org.dethstar'
-version '1.0-SNAPSHOT'
-
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
     }
+
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE")
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE"
+        classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-
-jar {
-    baseName = 'gs-spring-boot'
-    version =  '0.1.0'
+plugins {
+    id 'maven-publish'
+    id 'maven'
+    id 'groovy'
+    id 'org.springframework.boot' version '1.5.10.RELEASE'
 }
+
+dependencyManagement {
+    dependencies {
+    }
+}
+
+group = 'org.dethstart.scheduler'
+
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-jetty")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile 'org.codehaus.groovy:groovy-all:2.4.10'
+    compile 'org.codehaus.groovy:groovy-all:2.4.6'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.4.7.RELEASE'
 
-    testCompile("junit:junit")
+    testCompile 'junit:junit-dep:4.10'
+    testCompile 'cglib:cglib-nodep:2.2'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile 'org.springframework:spring-test:4.1.6.RELEASE'
+    testCompile 'org.spockframework:spock-core'
+    testCompile 'org.spockframework:spock-spring'
+}
+
+bootRepackage {
+    enabled = false
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file:///C:/.storage/") {
+             //   authentication(userName: System.getenv("SERVICE_ACCOUNT_NAME"), password: System.getenv("SERVICE_ACCOUNT_PASSWORD"))
+            }
+        }
+    }
 }
 
 sourceSets {
     main {
         groovy {
-            srcDir "src/main/groovy"
+            srcDirs = ['src/main/groovy']
         }
     }
 
     test {
         groovy {
-            srcDir "src/test/groovy"
+            srcDirs = ['src/test/groovy']
         }
+    }
+
+   /* integrationTest {
+        groovy {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDirs file('src/integration-test/groovy')
+        }
+        resources.srcDir file('src/integration-test/resources')
+    }*/
+}
+
+configurations {
+    integrationTestCompile.extendsFrom compile
+    integrationTestCompile.extendsFrom testCompile
+    // integrationTestRuntime.extendsFrom testRuntime
+}
+
+task wrapper(type: Wrapper) {
+    description = 'Download the gradle wrapper and requisite files. Overwrites existing wrapper.'
+    gradleVersion = '2.7'
+}
+
+jar {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version)
     }
 }
