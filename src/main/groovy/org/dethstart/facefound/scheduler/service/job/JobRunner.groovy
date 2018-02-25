@@ -44,7 +44,7 @@ class JobRunner implements Runnable {
         if (jobExecution) {
             throw new BusyJobRunnerException("JobRunner #$number: Job runner already has job")
         } else {
-            this.jobExecution = new JobExecution()
+            this.jobExecution = newJobExecution
         }
     }
 

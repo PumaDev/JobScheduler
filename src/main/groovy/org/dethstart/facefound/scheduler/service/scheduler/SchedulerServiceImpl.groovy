@@ -39,7 +39,7 @@ class SchedulerServiceImpl implements SchedulerService {
     @Autowired
     JobExecutionService jobExecutionService
 
-    Queue<JobRunner> freeJobRunners = []
+    Queue<JobRunner> freeJobRunners = [] as LinkedList
 
     List<Thread> threads = []
 
@@ -49,7 +49,7 @@ class SchedulerServiceImpl implements SchedulerService {
 
     @PostConstruct
     void init() {
-        for (i in (0..threadPoolSize)) {
+        for (i in (1..threadPoolSize)) {
             JobRunner jobRunner = new JobRunner(jobService, jobExecutionService, threadPause, freeJobRunners)
             Thread thread = new Thread(jobRunner)
 
@@ -66,6 +66,8 @@ class SchedulerServiceImpl implements SchedulerService {
             if (!freeJobRunners.isEmpty()) {
                 self.startJob()
             }
+
+            Thread.sleep(monitoringPause)
         }
     }
 

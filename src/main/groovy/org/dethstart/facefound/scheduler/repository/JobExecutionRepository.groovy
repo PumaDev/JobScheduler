@@ -5,9 +5,9 @@ import org.dethstart.facefound.scheduler.domain.JobStatus
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 
-import java.sql.Timestamp
+import java.time.Instant
 
 interface JobExecutionRepository extends JpaRepository<JobExecution, String> {
 
-    List<JobExecution> findJobExecutionByJobStatusAndLessStartDate(JobStatus jobStatus, Timestamp timestamp, Pageable pageable)
+    List<JobExecution> findJobExecutionByJobStatusAndNextRunDateLessThan(JobStatus jobStatus, Instant time, Pageable pageable)
 }

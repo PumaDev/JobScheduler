@@ -23,20 +23,13 @@ class JobExecution {
     @Column(name = 'job_type', nullable = false)
     String jobType
 
-    @Lob
-    @Column(name = 'job_details')
-    String jobDetails
-
     @Enumerated(EnumType.STRING)
     @Column(name = 'status', nullable = false)
     JobStatus jobStatus
 
-    @Column(name = 'error_message')
-    String errorMessage
-
     @Lob
-    @Column(name = 'error_details')
-    String errorDetails
+    @Column(name = 'job_details')
+    String jobDetails
 
     @Column(name = "start_date")
     @Convert(converter = JpaInstantConverter)
@@ -46,9 +39,16 @@ class JobExecution {
     @Convert(converter = JpaInstantConverter)
     Instant endDate
 
-    @Column(name = "last_monitored_date")
+    @Column(name = 'error_message')
+    String errorMessage
+
+    @Lob
+    @Column(name = 'error_details')
+    String errorDetails
+
+    @Column(name = "next_run_date")
     @Convert(converter = JpaInstantConverter)
-    Instant lastMonitoredDate
+    Instant nextRunDate
 
     @Column(name = "created_date")
     @Convert(converter = JpaInstantConverter)

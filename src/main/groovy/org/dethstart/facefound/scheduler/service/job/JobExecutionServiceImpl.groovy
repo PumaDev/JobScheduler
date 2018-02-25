@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
-import java.sql.Timestamp
 import java.time.Instant
 
 @Service
@@ -26,8 +25,7 @@ class JobExecutionServiceImpl implements JobExecutionService {
 
     @Override
     JobExecution getJobExecutionForRun() {
-        Timestamp now = Timestamp.from(Instant.now())
-        List<JobExecution> jobExecutionsForRun = jobExecutionRepository.findJobExecutionByJobStatusAndLessStartDate(JobStatus.NEW, now, new PageRequest(0, 1))
+        List<JobExecution> jobExecutionsForRun = jobExecutionRepository.findJobExecutionByJobStatusAndNextRunDateLessThan(JobStatus.NEW, Instant.now(), new PageRequest(0, 1))
         return jobExecutionsForRun ? jobExecutionsForRun[0] : null
     }
 

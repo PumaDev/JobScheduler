@@ -36,6 +36,7 @@ dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.6'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.4.7.RELEASE'
+    compile 'mysql:mysql-connector-java'
 
     testCompile 'junit:junit-dep:4.10'
     testCompile 'cglib:cglib-nodep:2.2'
@@ -57,16 +58,6 @@ task sourcesJar(type: Jar) {
 artifacts {
     archives jar
     archives sourcesJar
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "file:///C:/.storage/") {
-             //   authentication(userName: System.getenv("SERVICE_ACCOUNT_NAME"), password: System.getenv("SERVICE_ACCOUNT_PASSWORD"))
-            }
-        }
-    }
 }
 
 sourceSets {
@@ -107,5 +98,17 @@ jar {
     manifest {
         attributes('Implementation-Title': project.name,
                 'Implementation-Version': project.version)
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'org.dethstart.facefound'
+            artifactId 'scheduler'
+            version '1.1'
+
+            from components.java
+        }
     }
 }
